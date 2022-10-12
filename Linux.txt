@@ -1,0 +1,270 @@
+				Linux			
+				=====
+--why linux?
+--aws..create a/c
+https://aws.amazon.com/
+
+--steps
+1.email/password
+2.personal info.
+3.bank card details
+4.phone verification
+5.select account type..'personel/basic'
+
+--Regions/Datacentres
+1.distance
+2.target aud.
+3.cost
+	vs
+--AZ..
+	..fail over
+
+23/08
+=====
+-create ec2 inst.
+
+1.Name
+2.Linux..OS
+	1.RHEL..6.x 7.x 8.x....RHEL8
+	2.Ubuntu..18 19 20 22
+	3.centos
+	4.suse
+	5.Amazon
+3.instance type,,'t2.micro'
+4.key pair..'new kaypair'(".pem")
+5.firewall..
+	SSH	'anywhere'
+6.storage	..default
+
+
+24/08
+=====
+--SSH(22) to ec2 instance
+1.ipadrs..13.233.68.63
+2.username..
+	RHEL/centos/Amazon	--	'ec2-user'
+	ubuntu			--	'ubuntu'
+	windows			--	'Administrator'
+	
+		
+3.prviate key..'test-instance-cis1.ppk'
+
+--'putty'..connect to remote inst...install
+--test-instance-cis1.pem-->'.ppk'..'puttygen'
+
+Linux cmds...
+-------------
+#sudo su	..switch to 'root' user
+#pwd		..present working dir.
+#cd		..change dir
+#ls		..list files/dirs.
+#cd /		..'/' sys. dir
+#cd /root	..root user perns. dir
+#cd /home	..non root user's pern. dirs
+#cd ..		..back one dir.
+
+25/08
+=====
+#mkdir dirname
+#touch filename
+
+#vi filename
+	'i'	..insert
+	'esc'	..lock file
+	':w'	..save
+	':q'	..quit
+	':wq'	..save,quit
+	':q!'	..quit forcefully
+	':set number'	..line numbers
+	'dd'	..delete lines
+
+--copy
+	1.files
+	#cp sourcefile /dest/path
+		'*'..all
+		'?'..any one ch
+
+
+
+26/08
+=====
+#cp file??.txt /dest/path
+	#cp filename /dest/path	..copy files
+	#cp -r dirname /dest/path	..'-r' recursively
+	#cp -r * /dest/path
+
+#mv ..move files/rename
+	#mv filename/dirname /dest/path	..mv files and dir
+
+
+#rm	..delete/remove
+	#rm -f filename	..-f forcefully
+	#rm -rf dirname	..-r recursively
+--SSH..secured shell
+	1.private key..
+
+	inst1..liunx(3.110.86.152) --> inst2..linux(52.66.179.41)
+	
+	#ssh -i inst2-key-file.pem ec2-user@inst2-ipadrs
+
+
+--Remote copy..'winscp'..install
+	wind-->copy inst2 key file-->inst1
+
+
+
+29/08
+=====
+--SSh..public key/password less
+
+1.#ssh-keygen	..generate public key
+2.copy public key to remote inst
+
+#ssh user@remoteinst-ipadrs
+
+#cd /root/.ssh
+1.known_hosts	..
+2.id_rsa.pub
+3.id_rsa	
+4.authorized_keys	..copied public keys
+
+
+
+scenarios
+---------
+1.remove public of remote inst.
+2.reset public of master inst
+
+3.inst1,inst2,inst3
+	1.copy public key of inst1-->inst2..#ssh
+	2.copy public key of inst2-->inst3..#ssh
+	3.inst1..#ssh root@inst3?
+	4.inst1..#ssh user@inst2 --> #ssh user@inst3?
+
+
+
+
+30/08
+-----
+
+File permission
+===============
+
+--file1..	read.....r-4
+		write....w-2
+		execute..x-1
+
+ex:file1..rwx..4+2+1=7
+	..rw-..4+2  =6
+	..r-x..4 +1 =5
+	..r--..4     =4
+	..-wx.. +2+1 =3
+	..-w-..  2   =2
+        ..--x...1    =1
+	..---	     =0
+
+file1.. rw-	r--	r--  	
+	user	group   others
+	4+2	4	4	= 644..file default perms
+
+	rwx	r-x	r-x
+	4+2+1	4+1	4+1	=755..dir. default perms
+
+
+file1..754..rwx r-x r--
+#chmod 754 file1
+#chmod 444 file1
+
+
+
+
+user1,user2...user11
+group..set of users
+group1..user1 user2...user10
+
+
+01/09
+=====
+--users
+	#useradd uname
+	#usermod -G gname uname
+--groups
+	#groupadd gname
+
+--set perms for ind. users/groups..#setfacl
+	#setfacl -m u:uname:rwx file/dir
+	#setfacl -R -m g:gname:rwx dir
+
+
+
+
+
+02/09
+=====
+--packages..RHEL/Centos
+	1.yum repo.
+		#yum intall git 
+		#yum install httpd -y
+
+	2.rpm..redhat pkg. mgm.
+		#wget pkg-URL.rpm
+		#rpm -ivh pkgname.rpm
+			-i-install..-v-verbose..-h-human red.format
+		#rpm https://packages.chef.io/files/stable/chef-workstation/22.7.1006/el/8/chef-workstation-22.7.1006-1.el8.x86_64.rpm
+	
+
+	3.private repo...jenkins
+
+--ubuntu..
+	1.apt repo.
+		#apt install git -y
+	2.dpkg..
+		#dpk -ivh pkg-name.dpk
+
+--services
+--current status
+	#service httpd status/start/stop
+		or
+	#systemctl status/start/stop httpd
+
+	active,disabled..restart..inactive
+	active,enabled...restart..active
+	inactive,disabled..restart..inactive
+	inactive,enabled...restart..active
+
+--default status..enabled,disabled
+	#chkconfig httpd off/on
+		or
+	#systemctl enable/disable httpd
+
+
+03/09
+=====
+--remove pkgs
+	1.yum
+		#yum erase pkgname -y
+		#yum erase git/httpd
+
+	2.rpm 
+		#rpm -evh pkgname
+		#rpm -evh chefdk.rpm
+--rpm..
+	#rpm -qa	..list installed pkg
+	#rpm -qa | grep chefdk
+
+	#yum list | grep chefdk
+
+--grep..
+	#cat file | grep hello
+--find..
+	#find filename
+
+--top
+	#top 
+--ps
+	#ps aux
+
+
+
+
+
